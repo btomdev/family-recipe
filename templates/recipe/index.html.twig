@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Toutes les recettes{% endblock %}
-
 {% block body %}
-    <h1>index</h1>
-    <ul>
-        <li>
-            <a href="{{ url('recipe.show', {id: 32, slug: 'pates-bolognaise'}) }}">Pâtes Bolognaise</a>
-        </li>
-    </ul>
+    <h1>Toutes les recettes en moins d'une heure</h1>
+    {% for recipe in recipes %}
+        <ul>
+            <li>
+                <a href="{{ url('recipe.show', {id: recipe.id, slug: recipe.slug}) }}">{{ recipe.title }}</a>
+            </li>
+        </ul>
+    {%  endfor %}
 {% endblock %}
