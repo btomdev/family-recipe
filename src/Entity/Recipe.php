@@ -3,10 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\RecipeRepository;
+use App\Validator\BanWord;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
+#[UniqueEntity('title')]
+#[UniqueEntity('slug')]
 class Recipe
 {
     #[ORM\Id]
@@ -15,13 +20,26 @@ class Recipe
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    #[Assert\NotBlank]
+    #[BanWord]
+    private string $title = '';
 
     #[ORM\Column(length: 255)]
-    private ?string $slug = null;
+    #[Assert\Sequentially(constraints: [
+        new Assert\Length(min: 5, max: 255),
+        new Assert\Regex(pattern: "/^[a-z0-9-]+(?:-[a-z0-9-]+)*$/", message: "Ceci n'est pas un slug d'url valide")
+    ])]
+    private string $slug = '';
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $content = null;
+    #[Assert\NotBlank]
+    private string $content = '';
+
+    #[ORM\Column(nullable: true)]
+    #[Assert\NotBlank]
+    #[Assert\Positive]
+    #[Assert\LessThan(value: 1440)] // less 24h in minutes
+    private ?int $duration = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -29,15 +47,12 @@ class Recipe
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $duration = null;
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -49,7 +64,7 @@ class Recipe
         return $this;
     }
 
-    public function getSlug(): ?string
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -61,7 +76,7 @@ class Recipe
         return $this;
     }
 
-    public function getContent(): ?string
+    public function getContent(): string
     {
         return $this->content;
     }
@@ -69,6 +84,18 @@ class Recipe
     public function setContent(string $content): static
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): static
+    {
+        $this->duration = $duration;
 
         return $this;
     }
@@ -93,18 +120,6 @@ class Recipe
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(?int $duration): static
-    {
-        $this->duration = $duration;
 
         return $this;
     }

@@ -11,6 +11,7 @@
         <thead>
         <tr>
             <th>Titre</th>
+            <th>Durée</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -20,6 +21,7 @@
                 <td>
                     <a href="{{ url('recipe.show', {id: recipe.id, slug: recipe.slug}) }}">{{ recipe.title }}</a>
                 </td>
+                <td>{{ recipe.duration }}</td>
                 <td>
                     <div class="d-flex gap-1">
                         <a class="btn btn-primary btn-sm" href="{{ url('recipe.edit', {id: recipe.id, slug: recipe.slug}) }}">Modifier</a>
