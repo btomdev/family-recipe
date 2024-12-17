@@ -1,0 +1,30 @@
+{% apply inky_to_html %}
+    <container>
+        <row class="header">
+            <columns>
+                <spacer size="16"></spacer>
+                <h1 class="text-center">Demande de contact</h1>
+            </columns>
+        </row>
+        <row>
+            <columns>
+                <h2>Nom : {{ data.name }}</h2>
+            </columns>
+        </row>
+        <row>
+            <columns>
+                <h2>Email : {{ data.email }}</h2>
+            </columns>
+        </row>
+        <row>
+            <columns>
+                <h2>Message : {{ data.message|nl2br }}</h2>
+            </columns>
+        </row>
+        <row>
+            <columns>
+                <button class="secondary button" href="{{ url('home') }}">Click To App !</button>
+            </columns>
+        </row>
+    </container>
+{% endapply %}
