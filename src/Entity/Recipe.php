@@ -14,31 +14,41 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('slug')]
 class Recipe
 {
+    public const VALIDATION_GROUP_NEW = 'new_recipe';
+    public const VALIDATION_GROUP_EDIT = 'edit_recipe';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-    #[BanWord]
+    #[Assert\Sequentially(constraints: [
+        new Assert\NotBlank(groups: [self::VALIDATION_GROUP_NEW, self::VALIDATION_GROUP_EDIT]),
+        new Assert\Length(min: 4, max: 255, groups: [self::VALIDATION_GROUP_NEW, self::VALIDATION_GROUP_EDIT]),
+        new BanWord(groups: [self::VALIDATION_GROUP_NEW, self::VALIDATION_GROUP_EDIT])
+    ])]
     private string $title = '';
 
     #[ORM\Column(length: 255)]
     #[Assert\Sequentially(constraints: [
-        new Assert\Length(min: 5, max: 255),
-        new Assert\Regex(pattern: "/^[a-z0-9-]+(?:-[a-z0-9-]+)*$/", message: "Ceci n'est pas un slug d'url valide")
+        new Assert\Length(max: 255, groups: [self::VALIDATION_GROUP_NEW]),
+        new Assert\Length(min: 4, max: 255, groups: [self::VALIDATION_GROUP_EDIT]),
+        new Assert\Regex(pattern: "/^[a-z0-9-]+(?:-[a-z0-9-]+)*$/", message: "Ceci n'est pas un slug d'url valide", groups: [self::VALIDATION_GROUP_NEW, self::VALIDATION_GROUP_EDIT])
     ])]
     private string $slug = '';
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: [self::VALIDATION_GROUP_NEW, self::VALIDATION_GROUP_EDIT])]
     private string $content = '';
 
     #[ORM\Column(nullable: true)]
-    #[Assert\NotBlank]
-    #[Assert\Positive]
-    #[Assert\LessThan(value: 1440)] // less 24h in minutes
+    #[Assert\Sequentially(constraints: [
+        new Assert\NotBlank(groups: [self::VALIDATION_GROUP_NEW, self::VALIDATION_GROUP_EDIT]),
+        new Assert\Positive(groups: [self::VALIDATION_GROUP_NEW, self::VALIDATION_GROUP_EDIT]),
+        // less 24h in minutes
+        new Assert\LessThan(value: 1440, groups: [self::VALIDATION_GROUP_NEW, self::VALIDATION_GROUP_EDIT])
+    ])]
     private ?int $duration = null;
 
     #[ORM\Column]

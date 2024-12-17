@@ -40,6 +40,7 @@ class RecipeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Recipe::class,
+            'validation_groups' => [Recipe::VALIDATION_GROUP_NEW, Recipe::VALIDATION_GROUP_EDIT],
         ]);
     }
 
@@ -55,7 +56,7 @@ class RecipeType extends AbstractType
             return;
         }
 
-        if ($data->getSlug() === null) {
+        if ($data->getSlug() === '') {
             $slugger = new AsciiSlugger();
             $data->setSlug($slugger->slug($data->getTitle())->lower());
         }

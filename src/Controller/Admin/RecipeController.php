@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Recipe;
 use App\Form\RecipeType;
@@ -10,7 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
+#[Route('/admin/les-recettes', name: 'admin.recipe.')]
 class RecipeController extends AbstractController
 {
     public function __construct(
@@ -19,34 +21,36 @@ class RecipeController extends AbstractController
     ) {
     }
 
-    #[Route('/recettes', name: 'recipe.index')]
+    #[Route('/', name: 'index')]
     public function index(Request $request): Response
     {
-        $recipes = $this->em->getRepository(Recipe::class)->findWithDurationLowerThan(60);
+        $recipes = $this->recipeRepository->findWithDurationLowerThan(60);
 
-        return $this->render('recipe/index.html.twig', [
+        return $this->render('admin/recipe/index.html.twig', [
             'recipes' => $recipes,
         ]);
     }
 
-    #[Route('/recettes/{slug}-{id}', name: 'recipe.show', requirements: ['slug' => '[a-z0-9-_]+', 'id' => '\d+'], methods: ['GET'])]
+    #[Route('/{slug}-{id}', name: 'show', requirements: ['slug' => '[a-z0-9-_]+', 'id' => '\d+'], methods: ['GET'])]
     public function show(Request $request, string $slug, int $id): Response
     {
-        $recipe = $this->em->getRepository(Recipe::class)->find($id);
+        $recipe = $this->recipeRepository->find($id);
 
         if ($recipe->getSlug() !== $slug ) {
-            return $this->redirectToRoute('recipe.show', ['slug' => $recipe->getSlug(), 'id' => $id]);
+            return $this->redirectToRoute('admin.recipe.show', ['slug' => $recipe->getSlug(), 'id' => $id]);
         }
 
-        return $this->render('recipe/show.html.twig', [
+        return $this->render('admin/recipe/show.html.twig', [
             'recipe' => $recipe,
         ]);
     }
 
-    #[Route('/nouvelle-recettes', name: 'recipe.create', methods: ['GET', 'POST']), ]
+    #[Route('/ajouter', name: 'create', methods: ['GET', 'POST']), ]
     public function create(Request $request): Response
     {
-        $form = $this->createForm(RecipeType::class);
+        $form = $this->createForm(RecipeType::class, null, [
+            'validation_groups' => [Recipe::VALIDATION_GROUP_NEW]
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -58,18 +62,20 @@ class RecipeController extends AbstractController
 
             $this->addFlash('success', 'La recette à bien été enregistée');
 
-            return $this->redirectToRoute('recipe.index');
+            return $this->redirectToRoute('admin.recipe.index');
         }
 
-        return $this->render('recipe/create.html.twig', [
+        return $this->render('admin/recipe/create.html.twig', [
             'form' => $form,
         ]);
     }
 
-    #[Route('/recettes/{slug}-{id}/edit', name: 'recipe.edit', requirements: ['slug' => '[a-z0-9-_]+', 'id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/{id}', name: 'edit', requirements: ['id' => Requirement::DIGITS], methods: ['GET', 'POST'])]
     public function edit(Recipe $recipe, Request $request): Response
     {
-        $form = $this->createForm(RecipeType::class, $recipe);
+        $form = $this->createForm(RecipeType::class, $recipe, [
+            'validation_groups' => [Recipe::VALIDATION_GROUP_EDIT]
+        ]);
 
         $form->handleRequest($request);
 
@@ -78,16 +84,16 @@ class RecipeController extends AbstractController
 
             $this->addFlash('success', 'la recette à bien été modifiée');
 
-            return $this->redirectToRoute('recipe.index');
+            return $this->redirectToRoute('admin.recipe.index');
         }
 
-        return $this->render('recipe/edit.html.twig', [
+        return $this->render('admin/recipe/edit.html.twig', [
             'recipe' => $recipe,
             'form' => $form,
         ]);
     }
 
-    #[Route('/recettes/{slug}-{id}', name: 'recipe.remove', requirements: ['slug' => '[a-z0-9-_]+', 'id' => '\d+'], methods: ['DELETE'])]
+    #[Route('/{id}', name: 'remove', requirements: ['id' => Requirement::DIGITS], methods: ['DELETE'])]
     public function remove(Recipe $recipe): Response
     {
         $this->em->remove($recipe);
@@ -95,6 +101,6 @@ class RecipeController extends AbstractController
 
         $this->addFlash('success', 'La recette à bien été supprimée');
 
-        return $this->redirectToRoute('recipe.index');
+        return $this->redirectToRoute('admin.recipe.index');
     }
 }
