@@ -1,0 +1,9 @@
+{{ form_start(form) }}
+{{ form_row(form.name) }}
+{{ form_row(form.slug) }}
+{{ form_errors(form) }}
+
+<button type="submit" class="btn btn-primary">Enregister</button>
+
+{{ form_row(form._token) }}
+{{ form_end(form, {render_rest: false}) }}

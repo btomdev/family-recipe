@@ -32,6 +32,7 @@ class Recipe
 
     #[ORM\Column(length: 255)]
     #[Assert\Sequentially(constraints: [
+        new Assert\NotBlank(groups: [self::VALIDATION_GROUP_EDIT]),
         new Assert\Length(max: 255, groups: [self::VALIDATION_GROUP_NEW]),
         new Assert\Length(min: 4, max: 255, groups: [self::VALIDATION_GROUP_EDIT]),
         new Assert\Regex(pattern: "/^[a-z0-9-]+(?:-[a-z0-9-]+)*$/", message: "Ceci n'est pas un slug d'url valide", groups: [self::VALIDATION_GROUP_NEW, self::VALIDATION_GROUP_EDIT])
