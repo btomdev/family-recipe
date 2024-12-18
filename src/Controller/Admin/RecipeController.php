@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Recipe;
 use App\Form\RecipeType;
+use App\Repository\CategoryRepository;
 use App\Repository\RecipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +18,7 @@ class RecipeController extends AbstractController
 {
     public function __construct(
         private readonly RecipeRepository $recipeRepository,
+        private readonly CategoryRepository $categoryRepository,
         private readonly EntityManagerInterface $em
     ) {
     }

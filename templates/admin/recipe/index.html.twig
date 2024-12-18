@@ -11,6 +11,7 @@
         <thead>
         <tr>
             <th>Titre</th>
+            <th>Catégorie</th>
             <th>Durée</th>
             <th>Actions</th>
         </tr>
@@ -21,6 +22,7 @@
                 <td>
                     <a href="{{ path('admin.recipe.show', {id: recipe.id, slug: recipe.slug}) }}">{{ recipe.title }}</a>
                 </td>
+                <td>{{ recipe.category.name|default('') }}</td>
                 <td>{{ recipe.duration }}</td>
                 <td>
                     <div class="d-flex gap-1">
