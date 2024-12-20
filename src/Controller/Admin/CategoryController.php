@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/les-categories', name: 'admin.category.')]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 class CategoryController extends AbstractController
 {
     public function __construct(

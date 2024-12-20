@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/les-recettes', name: 'admin.recipe.')]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 class RecipeController extends AbstractController
 {
     public function __construct(

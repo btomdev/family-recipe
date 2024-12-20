@@ -25,7 +25,7 @@
                             <a class="nav-link {{ app.current_route == 'home' ? 'active' : '' }}" href="{{ path('home') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ app.current_route starts with 'contact' ? 'active' : '' }}" href="{{ path('contact') }}">Contact</a>
+                            <a class="nav-link {{ app.current_route == 'contact' ? 'active' : '' }}" href="{{ path('contact') }}">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -36,13 +36,15 @@
                         {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
                             <li class="nav-item">
                                 <a class="nav-link {{ app.current_route == 'login' ? 'active' : '' }}" href="{{ path('login') }}">Connexion</a>
+                            </li><li class="nav-item">
+                                <a class="nav-link {{ app.current_route == 'register' ? 'active' : '' }}" href="{{ path('register') }}">Inscription</a>
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link {{ app.current_route == 'admin.recipe.' ? 'active' : '' }}" href="{{ path('admin.recipe.index') }}">Recettes</a>
+                                <a class="nav-link {{ app.current_route starts with 'admin.recipe.' ? 'active' : '' }}" href="{{ path('admin.recipe.index') }}">Recettes</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ app.current_route == 'admin.category.' ? 'active' : '' }}" href="{{ path('admin.category.index') }}">Catégories</a>
+                                <a class="nav-link {{ app.current_route starts with 'admin.category.' ? 'active' : '' }}" href="{{ path('admin.category.index') }}">Catégories</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ app.current_route == 'logout' ? 'active' : '' }}" href="{{ path('logout') }}">Déconnexion</a>
