@@ -18,9 +18,8 @@ class RecipeRepository extends ServiceEntityRepository
         parent::__construct($registry, Recipe::class);
     }
 
-    public function paginate(int $page): Paginator
+    public function paginate(int $page, int $limit): Paginator
     {
-        $limit = 5;
         //TODO use knp_paginator
         return new Paginator(
             $this->createQueryBuilder('r')

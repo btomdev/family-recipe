@@ -4,7 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Recipe;
 use App\Form\RecipeType;
-use App\Repository\CategoryRepository;
 use App\Repository\RecipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +19,6 @@ class RecipeController extends AbstractController
 {
     public function __construct(
         private readonly RecipeRepository $recipeRepository,
-        private readonly CategoryRepository $categoryRepository,
         private readonly EntityManagerInterface $em
     ) {
     }
@@ -29,8 +27,9 @@ class RecipeController extends AbstractController
     public function index(Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
-        $recipes = $this->recipeRepository->paginate($page);
-        $maxPage = ceil($recipes->count() / 2);
+        $limit = 5;
+        $recipes = $this->recipeRepository->paginate($page, $limit);
+        $maxPage = ceil($recipes->count() / $limit);
 
         return $this->render('admin/recipe/index.html.twig', [
             'recipes' => $recipes,

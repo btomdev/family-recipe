@@ -15,6 +15,7 @@
             <tr>
                 <th>Name</th>
                 <th>Slug</th>
+                <th>Recettes</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -24,6 +25,7 @@
             <tr>
                 <td>{{ category.name }}</td>
                 <td>{{ category.slug }}</td>
+                <td>{{ category.count }}</td>
                 <td>
                     <div class="d-flex gap-1">
                         <a class="btn btn-primary btn-sm" href="{{ path('admin.category.edit', {id: category.id}) }}">Modifier</a>
