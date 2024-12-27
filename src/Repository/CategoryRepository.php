@@ -23,7 +23,7 @@ class CategoryRepository extends ServiceEntityRepository
     public function findAllWithCount(): array
     {
         return $this->createQueryBuilder('c')
-            ->select('NEW App\\DTO\\CategoryWithCountDto(c.id, c.name, c.slug, COUNT(c.id))')
+            ->select('NEW App\\DTO\\CategoryWithCountDTO(c.id, c.name, c.slug, COUNT(c.id))')
             ->leftJoin('c.recipes', 'r')
             ->groupBy('c.id')
             ->getQuery()

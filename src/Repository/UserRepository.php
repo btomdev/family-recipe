@@ -41,7 +41,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('identifier', $emailOrUsername)
             ->setMaxResults(1)
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     //    /**

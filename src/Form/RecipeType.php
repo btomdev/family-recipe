@@ -11,11 +11,11 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Component\Validator\Constraints\Image;
 
 class RecipeType extends AbstractType
 {
@@ -39,7 +39,22 @@ class RecipeType extends AbstractType
                 'class' => Category::class,
                 'choice_label' => 'name'
             ])
-            ->add('thumbnailFile', FileType::class)
+            ->add('thumbnailFile', FileType::class, [
+                'required' => false,
+            ])
+            ->add('quantities', CollectionType::class, [
+                'entry_type' => QuantityType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'entry_options' => ['label' => false],
+                'attr' => [
+//                    'data-controller' => 'form-collection',
+                    'data-form-collection-add-label-value' => 'Ajouter un ingrédient',
+                    'data-form-collection-delete-label-value' => 'Supprimer un ingrédient',
+                ],
+                'validation_groups' => $options['validation_groups'],
+            ])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->autoSlug(...))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->attachTimestamps(...))
         ;
