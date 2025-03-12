@@ -1,0 +1,77 @@
+services:
+  php:
+    container_name: "php-fpm"
+    build:
+      context: ./docker/php
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+    environment:
+      # Symfony Config
+      - APP_ENV=${APP_ENV}
+      - APP_SECRET=${APP_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+      - MESSENGER_TRANSPORT_DSN=${MESSENGER_TRANSPORT_DSN}
+      - APP_DEBUG=${APP_DEBUG}
+    volumes:
+      - ${APP_FOLDER:-./app}:/var/www
+      - ./.env.local:/var/www/.env
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  nginx:
+    container_name: "nginx"
+    environment:
+      HOSTNAME: ${HOSTNAME}
+    build:
+      context: ./docker/nginx
+    volumes:
+      - ${APP_FOLDER:-./app}:/var/www
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./logs:/var/log
+    depends_on:
+      - php
+    ports:
+      - "80:80"
+
+  mariadb:
+    restart: always
+    image: mariadb:latest
+    user: ${USER_UID}:${USER_GID}
+    container_name: ${DATABASE_CONTAINER_NAME}
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    healthcheck:
+      test: mariadb-admin ping -h 127.0.0.1 -u $MYSQL_USER --password=$MYSQL_PASSWORD
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    platform: linux/amd64
+    environment:
+      PMA_HOST: mariadb # Nom du conteneur MariaDB
+      PMA_PORT: 3306    # Port interne utilisé par phpMyAdmin
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mariadb
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      - MAILPIT_RELAY=127.0.0.1:25
