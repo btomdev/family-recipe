@@ -17,6 +17,7 @@ RUN apk update && \
         libsodium-dev \
         libzip-dev \
         libxslt-dev \
+        shadow \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install pdo_mysql sodium zip \
@@ -37,3 +38,12 @@ COPY php.ini /usr/local/etc/php/php.ini
 
 # Set working directory
 WORKDIR /var/www
+
+ARG USER_ID
+ARG USER_NAME
+ARG GROUP_ID
+
+RUN groupadd -f -g ${GROUP_ID} ${USER_NAME}
+RUN useradd -u ${USER_ID} -g ${GROUP_ID} ${USER_NAME}
+
+USER ${USER_NAME}

@@ -1,6 +1,7 @@
 # Variables
 DOCKER = docker
-DOCKER_COMPOSE = docker-compose
+HOST_USER = USER_ID=$(shell id -u) USER_NAME=$(shell whoami) GROUP_ID=$(shell id -g)
+DOCKER_COMPOSE = ${HOST_USER} docker-compose
 EXEC = $(DOCKER) exec -it php-fpm
 PHP = $(EXEC) php
 COMPOSER = $(EXEC) composer

@@ -5,6 +5,11 @@ services:
       context: ./docker/php
       args:
         PHP_VERSION: ${PHP_VERSION}
+        USER_ID: ${USER_ID}
+        USER_NAME: ${USER_NAME}
+        GROUP_ID: ${GROUP_ID}
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=0
     environment:
       # Symfony Config
       - APP_ENV=${APP_ENV}
