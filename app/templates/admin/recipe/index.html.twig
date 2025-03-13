@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div {{ newConnection ? stimulus_controller('new-connection') : '' }}></div>
+
     <h1>Les recettes en moins d'une heure</h1>
 
     <p>
