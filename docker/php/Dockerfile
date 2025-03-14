@@ -17,11 +17,21 @@ RUN apk update && \
         libsodium-dev \
         libzip-dev \
         libxslt-dev \
-        shadow \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install pdo_mysql sodium zip \
-    && docker-php-ext-install xsl
+        shadow
+
+# Install necessary php extentions
+# https://github.com/mlocati/docker-php-extension-installer?tab=readme-ov-file#downloading-the-script-on-the-fly-with-add
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN install-php-extensions \
+    gd \
+    pdo_mysql \
+    sodium \
+    zip \
+    xsl
+
+# Production
+#RUN install-php-extensions \
+#    opcache \
 
 # Clean up package cache
 RUN rm -rf /var/cache/apk/*
